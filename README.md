@@ -60,4 +60,4 @@ python main.py --test
 ```
 Please select the model you wish to test. Modify the parameters in `./config/demo.yml` to achieve this.
 
-*Some Bugs may exits*
+*Some Bugs may exists*
