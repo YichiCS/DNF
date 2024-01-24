@@ -33,7 +33,7 @@ diffusion:
 
 train:
     lr: 0.0001
-    epoch: 5
+    epoch: 50
     batch_size: 64
     model_type: 'Resnet50'
     dataset: "./dataset/dnf/train/lsun"
