@@ -34,6 +34,10 @@ def get_val_opt():
 
 
 if __name__ == '__main__':
+    import torch.multiprocessing as mp
+    mp.set_start_method(method='forkserver', force=True)
+    
+    
     opt = TrainOptions().parse()
     opt.dataroot = '{}/{}/'.format(opt.dataroot, opt.train_split)
     val_opt = get_val_opt()

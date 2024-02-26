@@ -29,7 +29,3 @@ diffusion:
   num_diffusion_timesteps: 1000
   steps: 20
 
-loadSize: 256
-rz_interp: bilinear
-ckpt: "./weights/model-2388000.ckpt"
-

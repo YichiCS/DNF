@@ -4,13 +4,11 @@ import yaml
 import argparse
 
 import torch
+import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-import torchvision.transforms.functional as TF
 
-from random import choice
+from torchvision.transforms.functional import InterpolationMode
 
-from PIL import Image
-from torch.utils.data import Dataset
 
 def dict2namespace(config):
     namespace = argparse.Namespace()
@@ -25,13 +23,18 @@ def dict2namespace(config):
 def parse_args_and_config():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--config", type=str, default="config.yaml", help="Name of the config, under ./dnf/config")
+    parser.add_argument("--dataroot", type=str, default='./dataset', help='The path to dataset')
+    parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--num_threads", type=int, default=4)
+    parser.add_argument( "--diffusion_ckpt", type=str, default="./weights/diffusion/model-2388000.ckpt")
+    parser.add_argument('--rz_interp', default='bilinear')
+    parser.add_argument('--loadSize', type=int, default=256, help='scale images to this size')
+    
     parser.add_argument(
-        "--config", type=str, default="config.yaml", 
-        help="Name of the config, under ./dnf/config"
+        '--gpu_ids', type=str, default='0',
+        help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU'
     )
-    parser.add_argument(
-        "--dataset", type=str, default='./dataset', 
-        help='The path to dataset')
 
 
     args = parser.parse_args()
@@ -41,66 +44,50 @@ def parse_args_and_config():
     config = dict2namespace(config)
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    
+    device = torch.device('cuda:{}'.format(args.gpu_ids[0])) if args.gpu_ids else torch.device('cpu')
     print(f"[Device]: {device}")
     args.device = device
 
     return args, config
 
-def sample_discrete(s):
-    if len(s) == 1:
-        return s[0]
-    return choice(s)
-
-rz_dict = {'bilinear': Image.BILINEAR,
-           'bicubic': Image.BICUBIC,
-           'lanczos': Image.LANCZOS,
-           'nearest': Image.NEAREST}
-
-def custom_resize(img, opt):
-    # print(opt.rz_interp)
-    # exit()
-    interp = opt.rz_interp
-    # interp = sample_discrete(opt.rz_interp)
-    return TF.resize(img, opt.loadSize, interpolation=rz_dict[interp])
+rz_dict = {'bilinear': InterpolationMode.BILINEAR,
+        'bicubic': InterpolationMode.BICUBIC,
+        'lanczos': InterpolationMode.LANCZOS,
+        'nearest': InterpolationMode.NEAREST}
 
 
-class ImageDataset(Dataset):
-    def __init__(self, root, opt):
-
-        self.root = root
-        self.save_root = root + '_dnf'
+class DNFDataset(datasets.ImageFolder):
+    def __init__(self, opt):
+        super().__init__(opt.dataroot)
+        
+        self.root = opt.dataroot
+        self.save_root =opt.dataroot + '_dnf'
         os.makedirs(self.save_root, exist_ok=True)
-        print(f"[DNF Dataset]: {self.save_root}")
+        print(f"[DNF Dataset]: From {self.root} to {self.save_root}")
+        
+        for foldername, _, _ in os.walk(self.root): 
+            if not os.path.exists(foldername.replace(self.root, self.save_root)):
+                os.mkdir(foldername.replace(self.root, self.save_root))
+                
+        rz_func = transforms.Resize((opt.loadSize, opt.loadSize), interpolation=rz_dict[opt.rz_interp])
+        # TODO: aug_func
+        aug_func = transforms.Lambda(lambda img: img)
+        
         self.transform = transforms.Compose([
-            transforms.Lambda(lambda img: custom_resize(img, opt)),
+            rz_func,
+            aug_func, 
             transforms.ToTensor(),
         ])
 
-        self.paths = []  
-        self.save_paths = []
-        for foldername, subfolders, filenames in os.walk(self.root): 
-            if not os.path.exists(foldername.replace(root, self.save_root)):
-                os.mkdir(foldername.replace(root, self.save_root))
-                # print(foldername.replace(root, self.save_root))
-            for filename in filenames: 
-                path = os.path.join(foldername, filename)
-                save_path = path.replace(root, self.save_root) 
-                self.paths.append(path) 
-                self.save_paths.append(save_path)  
-        
-
-    def __len__(self):
-        return len(self.paths)
-
     def __getitem__(self, index):
+        
+        path, _ = self.samples[index]
+        save_path = path.replace(self.root, self.save_root) 
+        sample = self.loader(path)
+        sample = self.transform(sample)
 
-        path = self.paths[index]
-        save_path = self.save_paths[index]
-
-        x = Image.open(path)
-        x = self.transform(x)
-
-        return x, path, save_path
+        return sample, save_path
     
 def inversion_first(x, seq, model):
 
@@ -112,6 +99,4 @@ def inversion_first(x, seq, model):
     return et
 
 def norm(x):
-
-
     return (x - x.min()) / (x.max() - x.min())

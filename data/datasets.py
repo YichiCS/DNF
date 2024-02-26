@@ -8,9 +8,15 @@ from io import BytesIO
 from PIL import Image
 from PIL import ImageFile
 from scipy.ndimage.filters import gaussian_filter
+from torchvision.transforms.functional import InterpolationMode
 
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+rz_dict = {'bilinear': InterpolationMode.BILINEAR,
+        'bicubic': InterpolationMode.BICUBIC,
+        'lanczos': InterpolationMode.LANCZOS,
+        'nearest': InterpolationMode.NEAREST}
 
 def dataset_folder(opt, root):
     if opt.mode == 'binary':
@@ -35,17 +41,17 @@ def binary_dataset(opt, root):
     if not opt.isTrain and opt.no_resize:
         rz_func = transforms.Lambda(lambda img: img)
     else:
-        rz_func = transforms.Lambda(lambda img: custom_resize(img, opt))
+        rz_func = transforms.Resize((opt.loadSize, opt.loadSize), interpolation=rz_dict[opt.rz_interp])
 
     dset = datasets.ImageFolder(
             root,
             transforms.Compose([
                 rz_func,
-                transforms.Lambda(lambda img: data_augment(img, opt)),
-                crop_func,
+                # transforms.Lambda(lambda img: data_augment(img, opt)),
+                # crop_func,
                 flip_func,
                 transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ]))
     return dset
 
