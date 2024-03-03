@@ -18,6 +18,7 @@ def get_timestep_embedding(timesteps, embedding_dim):
     return emb
 
 
+
 def nonlinearity(x):
     # swish
     return x*torch.sigmoid(x)
