@@ -1,6 +1,7 @@
 import functools
 import torch
 import torch.nn as nn
+from time import time
 from networks.resnet import resnet50
 from networks.base_model import BaseModel, init_weights
 
@@ -11,17 +12,22 @@ class Trainer(BaseModel):
 
     def __init__(self, opt):
         super(Trainer, self).__init__(opt)
+        if opt.num_classes > 1:
+            print(f"Attention! Train on {opt.num_classes} classes!")
 
         if self.isTrain and not opt.continue_train:
-            self.model = resnet50(pretrained=True)
-            self.model.fc = nn.Linear(2048, 1)
+            self.model = resnet50(pretrained=False)
+            self.model.fc = nn.Linear(2048, opt.num_classes)
             torch.nn.init.normal_(self.model.fc.weight.data, 0.0, opt.init_gain)
 
         if not self.isTrain or opt.continue_train:
-            self.model = resnet50(num_classes=1)
+            self.model = resnet50(num_classes=opt.num_classes)
 
         if self.isTrain:
-            self.loss_fn = nn.BCEWithLogitsLoss()
+            if opt.num_classes > 1:
+                self.loss_fn = nn.CrossEntropyLoss()
+            else:
+                self.loss_fn = nn.BCEWithLogitsLoss()
             # initialize optimizers
             if opt.optim == 'adam':
                 self.optimizer = torch.optim.Adam(self.model.parameters(),
@@ -35,6 +41,7 @@ class Trainer(BaseModel):
         if not self.isTrain or opt.continue_train:
             self.load_networks(opt.epoch)
         self.model.to(opt.gpu_ids[0])
+        self.opt = opt
 
 
     def adjust_learning_rate(self, min_lr=1e-6):
@@ -46,13 +53,17 @@ class Trainer(BaseModel):
 
     def set_input(self, input):
         self.input = input[0].to(self.device)
-        self.label = input[1].to(self.device).float()
+        if self.opt.num_classes > 1:
+            self.label = input[1].to(self.device).to(torch.int64)
+        else:
+            self.label = input[1].to(self.device).float()
 
 
     def forward(self):
         self.output = self.model(self.input)
 
     def get_loss(self):
+        
         return self.loss_fn(self.output.squeeze(1), self.label)
 
     def optimize_parameters(self):

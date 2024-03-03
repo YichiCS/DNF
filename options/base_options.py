@@ -15,7 +15,7 @@ class BaseOptions():
         parser.add_argument('--arch', type=str, default='res50', help='architecture for binary classification')
 
         # data augmentation
-        parser.add_argument('--rz_interp', default='bilinear')
+        parser.add_argument('--rz_interp', default='bicubic')
         parser.add_argument('--blur_prob', type=float, default=0)
         parser.add_argument('--blur_sig', default='0.5')
         parser.add_argument('--jpg_prob', type=float, default=0)
@@ -25,6 +25,7 @@ class BaseOptions():
         parser.add_argument('--dataroot', default='./dataset_dnf/', help='path to images (should have subfolders trainA, trainB, valA, valB, etc)')
 
         # parser.add_argument('--dataroot', default='./dataset/', help='path to images (should have subfolders trainA, trainB, valA, valB, etc)')
+        parser.add_argument('--num_classes', default=1, type=int,  help='multi-classes-generators')
         parser.add_argument('--classes', default='', help='image classes to train on')
         parser.add_argument('--class_bal', action='store_true')
         parser.add_argument('--batch_size', type=int, default=64, help='input batch size')
@@ -102,7 +103,7 @@ class BaseOptions():
 
         # additional
         opt.classes = opt.classes.split(',')
-        opt.rz_interp = opt.rz_interp.split(',')
+        # opt.rz_interp = opt.rz_interp.split(',')
         opt.blur_sig = [float(s) for s in opt.blur_sig.split(',')]
         opt.jpg_method = opt.jpg_method.split(',')
         opt.jpg_qual = [int(s) for s in opt.jpg_qual.split(',')]

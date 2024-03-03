@@ -7,6 +7,7 @@ import argparse
 from PIL import Image
 from tensorboardX import SummaryWriter
 
+from time import time
 from validate import validate
 from data import create_dataloader
 from earlystop import EarlyStopping
@@ -51,12 +52,14 @@ if __name__ == '__main__':
 
     model = Trainer(opt)
     early_stopping = EarlyStopping(patience=opt.earlystop_epoch, delta=-0.001, verbose=True)
+    from tqdm import tqdm
     for epoch in range(opt.niter):
-        epoch_start_time = time.time()
-        iter_data_time = time.time()
         epoch_iter = 0
 
-        for i, data in enumerate(data_loader):
+        # t1 = time()
+        for i, data in enumerate(tqdm(data_loader)):
+            
+            # t0 = time()
             model.total_steps += 1
             epoch_iter += opt.batch_size
 
@@ -71,9 +74,10 @@ if __name__ == '__main__':
                 print('saving the latest model %s (epoch %d, model.total_steps %d)' %
                       (opt.name, epoch, model.total_steps))
                 model.save_networks('latest')
+            
+            # print(time()-t0, time()-t1)
+            # t1 = time()
 
-            # print("Iter time: %d sec" % (time.time()-iter_data_time))
-            # iter_data_time = time.time()
 
         if epoch % opt.save_epoch_freq == 0:
             print('saving the model at the end of epoch %d, iters %d' %

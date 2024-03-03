@@ -37,9 +37,9 @@ def binary_dataset(opt, root):
     if opt.isTrain and not opt.no_flip:
         flip_func = transforms.RandomHorizontalFlip()
     else:
-        flip_func = transforms.Lambda(lambda img: img)
+        flip_func = transforms.RandomHorizontalFlip(p=0.0)
     if not opt.isTrain and opt.no_resize:
-        rz_func = transforms.Lambda(lambda img: img)
+        rz_func = rz_func = transforms.Resize((opt.loadSize, opt.loadSize), interpolation=rz_dict[opt.rz_interp])
     else:
         rz_func = transforms.Resize((opt.loadSize, opt.loadSize), interpolation=rz_dict[opt.rz_interp])
 

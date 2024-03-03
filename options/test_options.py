@@ -8,6 +8,8 @@ class TestOptions(BaseOptions):
         parser.add_argument('--no_resize', action='store_true')
         parser.add_argument('--no_crop', action='store_true')
         parser.add_argument('--eval', action='store_true', help='use eval mode during test time.')
+        parser.add_argument('--results_dir', default='./results/')
 
         self.isTrain = False
+        self.isTest = True
         return parser
