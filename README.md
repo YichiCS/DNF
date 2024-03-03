@@ -2,11 +2,13 @@
 
 [Yichi Zhang](https://yichics.github.io/) and [Xiaogang Xu](https://xiaogang00.github.io/)
 
-Code repository for the paper: [Diffusion Noise Feature: Accurate and Fast Generated Image Detection](https://arxiv.org/abs/2312.02625). The code is based on [DDIM](https://github.com/ermongroup/ddim)
+Code repository for the paper: [Diffusion Noise Feature: Accurate and Fast Generated Image Detection](https://arxiv.org/abs/2312.02625). 
 
 ![fig](fig/fig1.png)
 
 ### Baseline
+
+The code is based on [CNNDetction](https://github.com/PeterWang512/CNNDetection)
 
 **Model Preparation**
 
