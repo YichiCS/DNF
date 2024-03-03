@@ -98,10 +98,10 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, channel=3, num_classes=2, zero_init_residual=False):
+    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False):
         super(ResNet, self).__init__()
         self.inplanes = 64
-        self.conv1 = nn.Conv2d(channel, 64, kernel_size=7, stride=2, padding=3,
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
@@ -146,7 +146,7 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x, return_hidden=False):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -158,11 +158,13 @@ class ResNet(nn.Module):
         x = self.layer4(x)
 
         x = self.avgpool(x)
-        output = x.view(x.size(0), -1)
-        x = output 
-        x = self.fc(x)
-
-        return x
+        hidden = x.view(x.size(0), -1)
+        x = self.fc(hidden)
+        
+        if return_hidden:
+            return x, hidden
+        else:
+            return x
 
 
 def resnet18(pretrained=False, **kwargs):
