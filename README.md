@@ -10,18 +10,15 @@ Code repository for the paper: [Diffusion Noise Feature: Accurate and Fast Gener
 
 The code is based on [CNNDetction](https://github.com/PeterWang512/CNNDetection)
 
+The checkpoints and testset can be download from [AliPan](https://www.alipan.com/s/pVzmSqGk6r1)
+
 **Model Preparation**
 
 Download the LSUN Bedroom pretrained DDIM from [here](https://heibox.uni-heidelberg.de/f/f179d4f21ebc4d43bbfe/?dl=1). Place it in `./weights/diffusion/` .
 
-We will release the checkpoints in the following updates.
-
 **Dataset Preparation**
 
-Download the **DiffusionForensics** from  [[OneDrive](https://mailustceducn-my.sharepoint.com/:f:/g/personal/zhendongwang_mail_ustc_edu_cn/EtKXrn4cjWtBi0H3v4j1ICsBKraCxnZiTWU4VzqRr0ilCw?e=trkgDR)]/[[RecDrive (code: dire)](https://rec.ustc.edu.cn/share/ec980150-4615-11ee-be0a-eb822f25e070)]
-
-<!-- Downlaod the **CNNSpot** from [CNNDetction](https://github.com/PeterWang512/CNNDetection) -->
-
+Download the **DiffusionForensics** from  [DIRE](https://github.com/ZhendongWang6/DIRE)
 Please refer to [CNNDetction](https://github.com/PeterWang512/CNNDetection) for the storage path of the dataset.
 
 **Transform Image to DNF**
