@@ -10,7 +10,6 @@ Code repository for the paper: [Diffusion Noise Feature: Accurate and Fast Gener
 
 The code is based on [CNNDetction](https://github.com/PeterWang512/CNNDetection)
 
-The checkpoints and testset can be download from [AliPan](https://www.alipan.com/s/pVzmSqGk6r1)
 
 **Model Preparation**
 
