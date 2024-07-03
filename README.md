@@ -18,7 +18,8 @@ Download the LSUN Bedroom pretrained DDIM from [here](https://heibox.uni-heidelb
 
 **Dataset Preparation**
 
-Download the **DiffusionForensics** from  [DIRE](https://github.com/ZhendongWang6/DIRE)
+Download the **DiffusionForensics** from  [DIRE](https://github.com/ZhendongWang6/DIRE). 
+
 Please refer to [CNNDetction](https://github.com/PeterWang512/CNNDetection) for the storage path of the dataset.
 
 **Transform Image to DNF**
