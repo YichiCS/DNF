@@ -19,6 +19,7 @@ Download the LSUN Bedroom pretrained DDIM from [here](https://heibox.uni-heidelb
 
 **Dataset Preparation**
 
+The testsets can be download from [Huggingface](https://huggingface.co/datasets/toru0035/DNFTestSet).
 Download the **DiffusionForensics** from  [DIRE](https://github.com/ZhendongWang6/DIRE). 
 
 Please refer to [CNNDetction](https://github.com/PeterWang512/CNNDetection) for the storage path of the dataset.
