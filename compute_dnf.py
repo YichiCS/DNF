@@ -12,7 +12,7 @@ from tqdm import tqdm
 from torchvision.utils import save_image
 
 from dnf.diffusion import Model
-from dnf.utils import DNFDataset, _DNFDataset
+from dnf.utils import _DNFDataset
 from dnf.utils import parse_args_and_config, inversion_first, norm
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
