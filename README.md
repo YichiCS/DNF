@@ -13,7 +13,7 @@ The code is based on [CNNDetction](https://github.com/PeterWang512/CNNDetection)
 
 **Model Preparation**
 
-The checkpoints can be download from [Huggingface](https://huggingface.co/toru0035/DNF).
+The new checkpoints will release soon.
 
 Download the LSUN Bedroom pretrained DDIM from [here](https://heibox.uni-heidelberg.de/f/f179d4f21ebc4d43bbfe/?dl=1). Place it in `./weights/diffusion/` .
 
